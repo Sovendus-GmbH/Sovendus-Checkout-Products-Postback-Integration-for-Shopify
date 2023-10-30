@@ -1,0 +1,39 @@
+<script>
+  var sovendusIdsByCountry = {
+    DE: "YOUR_DE_SOVENDUS_ID",
+    // add other countries here
+
+    // examples for other countries:
+    // UK: "YOUR_UK_SOVENDUS_ID",
+    // AT: "YOUR_AT_SOVENDUS_ID",
+    // DK: "YOUR_DK_SOVENDUS_ID",
+    // SE: "YOUR_SE_SOVENDUS_ID",
+  };
+  var countryCode = "{{checkout.billing_address.country_code}}";
+  var productId = sovendusIdsByCountry[countryCode];
+  if (productId) {
+    function loadSovReqTokenFromCookie() {
+      var sovReqToken = null;
+      var cookie =
+        document.cookie.split("; ").find(function (entry) {
+          return entry.startsWith("sovReqToken=");
+        }) || null;
+      if (cookie !== null) {
+        sovReqToken = cookie.split("=")[1];
+      }
+      return sovReqToken;
+    }
+    var sovReqToken = loadSovReqTokenFromCookie();
+    if (sovReqToken) {
+      var pixel = document.createElement("img");
+      pixel.src =
+        "https://press-order-api.sovendus.com/ext/" +
+        productId +
+        "/image?sovReqToken=" +
+        sovReqToken;
+      document.getElementsByTagName("body")[0].appendChild(pixel);
+      // remove the cookie
+      document.cookie = "sovReqToken=;path=/;secure;samesite=strict;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  }
+</script>
