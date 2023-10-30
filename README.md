@@ -4,7 +4,7 @@
 
 1. In you Shopify backend go to: Settings -> Customer events 
 2. Click on "Add custom pixel" on the top right, then enter a name for it e.g. "Sovendus Cookie"
-3. Paste the folloing code in to the textarea: 
+3. Paste the following code in to the textarea: 
 ```
 
 var sovReqToken = getSovReqTokenFromUrl();
