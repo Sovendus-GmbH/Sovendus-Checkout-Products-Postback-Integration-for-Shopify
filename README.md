@@ -6,7 +6,6 @@
 2. Click on "Add custom pixel" on the top right, then enter a name for it e.g. "Sovendus Cookie"
 3. Paste the following code in to the textarea: 
 ```
-
 var sovReqToken = getSovReqTokenFromUrl();
 // script version 1.0.0
 if (sovReqToken !== null) {
