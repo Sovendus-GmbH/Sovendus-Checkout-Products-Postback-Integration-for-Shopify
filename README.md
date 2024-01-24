@@ -5,7 +5,7 @@
 1. In you Shopify backend go to: Settings -> Customer events 
 2. Click on "Add custom pixel" on the top right, then enter a name for it e.g. "Sovendus Cookie"
 3. Paste the following code in to the textarea: 
-```
+```javascript
 var sovReqToken = getSovReqTokenFromUrl();
 // script version 1.0.0
 if (sovReqToken !== null) {
@@ -25,15 +25,15 @@ function saveSovReqTokenToCookie(sovReqToken, seconds) {
 # Track a successful checkout
 
 1. Copy the code below into an editor and add your Sovendus product id for each country into the sovendusIdsByCountry object
-```
+```html
 <script>
-  // script version 1.0.0
+  // script version 1.0.1
   var sovendusIdsByCountry = {
     DE: "YOUR_DE_SOVENDUS_ID",
     // add other countries here
 
     // examples for other countries:
-    // UK: "YOUR_UK_SOVENDUS_ID",
+    // GB: "YOUR_UK_SOVENDUS_ID",
     // AT: "YOUR_AT_SOVENDUS_ID",
     // DK: "YOUR_DK_SOVENDUS_ID",
     // SE: "YOUR_SE_SOVENDUS_ID",
