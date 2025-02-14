@@ -1,45 +1,47 @@
-var url = new URL(window.location);
-var sovReqToken = url.searchParams.get("sovReqToken");
-function saveSovReqTokenToCookie(key, value, seconds) {
-  document.cookie =
-    key + "=" + value + ";secure;samesite=strict;max-age=" + seconds;
+const url = new URL(window.location.href);
+const sovReqToken = url.searchParams.get("sovReqToken");
+
+function setCookie(cookieName, value) {
+  const path = "/";
+  const expireDate = new Date();
+  expireDate.setTime(expireDate.getTime() + 24 * 60 * 60 * 1000 * 30); // 30 days
+  const domain = window.location.hostname;
+  const cookieString = `${cookieName}=${value};secure;samesite=strict;expires=${expireDate.toUTCString()};domain=${domain};path=${path}`;
+  document.cookie = cookieString;
+  return value || "";
 }
 if (sovReqToken) {
-  var sovProductId = url.searchParams.get("sovProductId");
-  if (sovProductId) {
-    saveSovReqTokenToCookie("sovReqToken", sovReqToken, 1 * 60 * 5);
-    saveSovReqTokenToCookie("sovProductId", sovProductId, 1 * 60 * 5);
+  const sovReqProductId = url.searchParams.get("sovReqProductId");
+  if (sovReqProductId) {
+    setCookie("sovReqToken", sovReqToken);
+    setCookie("sovReqProductId", sovReqProductId);
   } else {
-    console.log("Sovendus - failed to find sovProductId in URL");
+    console.log("Sovendus - failed to find sovReqProductId in URL");
   }
 }
 
 analytics.subscribe("checkout_completed", () => {
-  function getCookieValue(cookieName) {
-    var cookieContent = null;
-    var cookie =
-      document.cookie.split("; ").find(function (entry) {
-        return entry.startsWith(cookieName + "=");
-      }) || null;
-    if (cookie !== null) {
-      cookieContent = cookie.split("=")[1];
+  function getCookieValue(name) {
+    const cookieArr = document.cookie.split("; ");
+    for (const cookie of cookieArr) {
+      const [cookieName, cookieValue] = cookie.split("=");
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
     }
-    return decodeURIComponent(cookieContent);
+    return null;
   }
-  var sovReqToken = getCookieValue("sovReqToken");
+  const sovReqToken = getCookieValue("sovReqToken");
   if (sovReqToken) {
-    var sovProductId = getCookieValue("sovProductId");
-    var pixel = document.createElement("img");
-    pixel.src =
-      "https://press-order-api.sovendus.com/ext/" +
-      sovProductId +
-      "/image?sovReqToken=" +
-      sovReqToken;
+    const sovReqProductId = getCookieValue("sovReqProductId");
+    const pixel = document.createElement("img");
+    pixel.src = `https://press-order-api.sovendus.com/ext/${sovReqProductId}/image?sovReqToken=${sovReqToken}`;
     document.body.appendChild(pixel);
-    // remove the cookies
-    document.cookie =
-      "sovReqToken=;path=/;secure;samesite=strict;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie =
-      "sovProductId=;path=/;secure;samesite=strict;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    const clearCookie = (cookieName) => {
+      const domain = window.location.hostname;
+      document.cookie = `${cookieName}=;secure;samesite=strict;expires=Thu, 01 Jan 1970 00:00:00 UTC;domain=${domain};path=/;`;
+    };
+    clearCookie("sovReqToken");
+    clearCookie("sovReqProductId");
   }
 });
